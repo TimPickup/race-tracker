@@ -519,7 +519,7 @@ function runnerForm(r) {
   return `<div class="card ${ex ? 'ex' : ''}" id="rform">${ex ? '<div class="exlabel">EXAMPLE – not saved until you tap Add</div>' : ''}
   <h3>${r ? 'Edit ' + esc(r.name) : 'Add a runner'}</h3>
   <div class="grid2"><div><label for="fname">Name</label><input id="fname" maxlength="24" value="${esc(r ? r.name : ex ? 'Example' : '')}" autocomplete="off"></div>
-  <div><label for="ftarget">Target finish (e.g. 2:30 or 23000)</label><input id="ftarget" type="text" inputmode="decimal" autocomplete="off" placeholder="2:30:00" value="${esc(r ? fmtDur(r.target, true) : ex ? '2:30:00' : '')}"></div></div>
+  <div><label for="fth">Target finish time</label><div class="row" style="gap:4px;flex-wrap:nowrap"><select id="fth" aria-label="Hours">${[1,2,3,4].map(h => `<option value="${h}" ${Math.floor((r ? r.target : 9000) / 3600) === h ? 'selected' : ''}>${h} h</option>`).join('')}</select><select id="ftm" aria-label="Minutes">${Array.from({length: 60}, (_, m) => `<option value="${m}" ${Math.floor((r ? r.target : 9000) % 3600 / 60) === m ? 'selected' : ''}>${String(m).padStart(2, '0')} m</option>`).join('')}</select></div></div></div>
   <label>Colour</label><div class="swatches">${PALETTE.map((p, i) => `<button class="swatch ${p.c === col ? 'on' : ''}" style="--c:${p.c};--ct:${p.t}" data-act="swatch" data-c="${p.c}" aria-label="Colour ${i + 1}">${p.c === col ? '✓' : ''}</button>`).join('')}</div>
   <label for="fwave">Planned start (optional, if they're in a later wave)</label><input id="fwave" type="time" value="${esc(r ? r.wave || '' : '')}">
   <div class="row" style="margin-top:10px"><button class="primary" data-act="${r ? 'saveedit' : 'addrunner'}" ${!r && state.runners.length >= 5 ? 'disabled' : ''}>${r ? 'Save' : 'Add runner'}</button>${r ? '<button data-act="canceledit">Cancel</button>' : ''}</div>
@@ -663,7 +663,7 @@ document.addEventListener('click', e => {
       if (editing) { const rr = findR(editing); rr._c = b.dataset.c; } document.querySelectorAll('.swatch').forEach(s => { const on = s.dataset.c === b.dataset.c; s.classList.toggle('on', on); s.textContent = on ? '✓' : ''; }); break;
     case 'example': exampleFill = !exampleFill; renderRunners(); break;
     case 'addrunner': case 'saveedit': {
-      const name = $('#fname').value.trim(), target = parseTarget($('#ftarget').value), wave = $('#fwave').value || null;
+      const name = $('#fname').value.trim(), target = (+$('#fth').value) * 3600 + (+$('#ftm').value) * 60, wave = $('#fwave').value || null;
       if (!name) { $('#formerr').textContent = 'Enter a name.'; return; }
       if (!target) { $('#formerr').textContent = 'Enter a target time like 2:30:00, between 1:00:00 and 5:00:00.'; return; }
       if (a === 'addrunner') { state.runners.push({ id: uid(), name, target, color: formColour || nextColour(), wave, start: null, sightings: [] }); exampleFill = false; formColour = null; toast(`Added ${name}`); }
