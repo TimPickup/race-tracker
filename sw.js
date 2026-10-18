@@ -1,5 +1,5 @@
 // Bump VERSION on every deploy so phones pick up the new page.
-const VERSION = 'rt-v1';
+const VERSION = 'rt-v2';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'];
